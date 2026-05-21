@@ -15,9 +15,9 @@ function DbSet:ToListAsync()
     local p = promise.new()
 
     Citizen.CreateThread(function()
-        local query   = string.format('SELECT * FROM `%s`', self._table)
-        local results = Citizen.Await(exports.oxmysql:fetch_async(query, {}))
-        p:resolve(results or {})
+        local query   = string.format('SELECT * FROM `%s`', self._table) -- self._table is the table name we set when creating the DbSet
+        local results = Citizen.Await(exports.oxmysql:fetch_async(query, {})) -- execute the query and wait for the results
+        p:resolve(results or {}) -- resolve the promise with the results, or an empty table if there are no results
     end)
 
     return p

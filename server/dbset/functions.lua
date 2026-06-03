@@ -1,6 +1,6 @@
-DBFunctions = {}
+DbHelperFunctions = {}
 
-function DBFunctions.findTable(tableName)
+function DbHelperFunctions.findTable(tableName)
     if type(tableName) ~= 'string' then
         error('Table name must be a string')
     end

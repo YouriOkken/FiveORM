@@ -6,7 +6,7 @@ DbSet = {}
 -- DbSet.__index = DbSet
 
 function DbSet.New(tableName)
-    DBFunctions.findTable(tableName) -- check if the table exists in the database, if not, throw an error
+    DbHelperFunctions.findTable(tableName) -- check if the table exists in the database, if not, throw an error
 
     local self = {
         _table = tableName,

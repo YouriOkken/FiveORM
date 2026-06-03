@@ -40,4 +40,5 @@ local data = entity:Where('name', 'John Doe'):Where('money', 100):ToListAsync();
 ```lua
 local players = exports['FiveORM']:DbSet('players')
 local results = players:Where('money', 200):Where('active', true):ToListAsync()
+print(json.encode(results))
 ```

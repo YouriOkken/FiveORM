@@ -12,8 +12,8 @@ shared_scripts {
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/wrapper/wrapper.lua',
+    'server/dbset/helper.lua',
     'server/functions.lua',
-    'server/dbset/functions.lua',
     'server/dbset/dbset.lua',
     'server/exports.lua',
 }

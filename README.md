@@ -21,7 +21,10 @@ for things like Where clauses in entity form.
 local entity = exports['FiveORM']:DbSet(tablename)
 ```
 
-## Functionality
+## Functionalies
+- ToList (getting all data from a table)
+- Where clauses (stackable)
+- Select
 
 ### ToListAsync
 To get all the data of an table, you can use the ToListAsync() function Included when setting an Entity
@@ -35,6 +38,13 @@ To filter data, you can add the :Where(column, value). <b>These are stackable!</
 ```lua
 local entity = exports['FiveORM']:DbSet(tablename)
 local data = entity:Where('name', 'John Doe'):Where('money', 100):ToListAsync();
+```
+
+### Select
+To select specific properties you can add the :Select() function
+```lua
+local entity = exports['FiveORM']:DbSet(tablename)
+local data = entity:Where('name', 'John Doe'):Select('id', 'name'):ToListAsync();
 ```
 
 ## Example

@@ -25,6 +25,7 @@ local entity = exports['FiveORM']:DbSet(tablename)
 - ToList (getting all data from a table)
 - Where clauses (stackable)
 - Select
+- Insert
 
 ### ToListAsync
 To get all the data of an table, you can use the ToListAsync() function Included when setting an Entity
@@ -41,10 +42,20 @@ local data = entity:Where('name', 'John Doe'):Where('money', 100):ToListAsync();
 ```
 
 ### Select
-To select specific properties you can add the :Select() function
+To select specific properties you can add the :Select() function.
 ```lua
 local entity = exports['FiveORM']:DbSet(tablename)
 local data = entity:Where('name', 'John Doe'):Select('id', 'name'):ToListAsync();
+```
+
+### Insert
+To insert a new record, use the :Add() function.
+
+Returns: The id of the newly made record if succesfull, otherwise nil
+```lua
+local entity = exports['FiveORM']:DbSet(tablename)
+local playerId = entity:Add({ name = 'John Doe', cash = 100 })
+print("Player added with ID: " .. tostring(playerId))
 ```
 
 ## Example

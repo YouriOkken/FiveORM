@@ -1,8 +1,3 @@
-local function FetchAll(tableName)
-    return DbSet.New(tableName):ToListAsync()
-end
-
-exports("FetchAll", function(...)
-    print("Resource " .. GetInvokingResource() .. " executed FetchAll export")
-    return FetchAll(...)
+exports("DbSet", function(tableName)
+    return DbSet.New(tableName)
 end)

@@ -5,10 +5,16 @@ name 'FiveORM'
 description 'A simple Entity Framework inspired ORM for FiveM'
 version '1.0.1'
 
+shared_scripts {
+    'config.lua'
+}
+
 server_scripts {
+    '@oxmysql/lib/MySQL.lua',
+    'server/wrapper/wrapper.lua',
     'server/wrapper/oxmysql.lua',
+    'server/functions.lua',
     'server/dbset/functions.lua',
     'server/dbset/dbset.lua',
     'server/exports.lua',
-    '@oxmysql/lib/MySQL.lua'
 }

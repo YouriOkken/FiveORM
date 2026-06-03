@@ -1,31 +1,31 @@
-local DbSet = {}
-local wrapper = require "server/wrapper/oxmysql"
-local functions = require "dbset/functions"
+DbSet = {}
 
 -- __index tells Lua: "if a method is not found on the instance,
 -- look it up on DbSet itself" -- this is how Lua does inheritance/OOP.
 -- Without this, calling Player:ToListAsync() would return nil.
-DbSet.__index = DbSet 
+DbSet.__index = DbSet
 
 function DbSet.New(tableName)
-    functions.findTable(tableName) -- check if the table exists, will throw an error if it doesn't
+    print("Creating DbSet for table: " .. tableName)
+    -- DBFunctions.findTable(tableName) -- check if the table exists, will throw an error if it doesn't
 
     return setmetatable({
         _table = tableName,
     }, DbSet)
+
+    function self:ToListAsync()
+        local response = MySQL.Sync.fetchAll(
+            string.format('SELECT `firstname`, `lastname` FROM `%s`', self._table),
+            {}
+        )
+        return response
+    end
 end
 
-function DbSet:ToListAsync()
-    local p = promise.new()
 
-    Citizen.CreateThread(function()
-        local query   = string.format('SELECT * FROM `%s`', self._table) -- self._table is the table name we set when creating the DbSet
-        local results = Citizen.Await(wrapper.fetch(query, {})) -- execute the query and wait for the results
-        p:resolve(results or {}) -- resolve the promise with the results, or an empty table if there are no results
-    end)
-
-    return p
-end
-
--- Example usage:
-local Player = DbSet.New('players')
+RegisterCommand("dbsettest", function()
+    local db = DbSet.New("users")  -- store the instance
+    print("Testing DbSet:ToListAsync()")
+    local result = db:ToListAsync()  -- call on the instance, not the class
+    print(json.encode(result))
+end, false)

@@ -63,5 +63,27 @@ function DbSet.New(tableName)
         return self
     end
 
+    function self.Add(_, data)
+        local columns = {}
+        local placeholders = {}
+        local params = {}
+
+        for column, value in pairs(data) do
+            DbHelperFunctions.findColumn(self._table, column)
+            table.insert(columns, string.format('`%s`', column))
+            table.insert(placeholders, '?')
+            table.insert(params, value)
+        end
+
+        local query = string.format(
+            'INSERT INTO `%s` (%s) VALUES (%s)',
+            self._table,
+            table.concat(columns, ", "),
+            table.concat(placeholders, ", ")
+        )
+
+        return Wrapper.execute(query, params)
+    end
+
     return self
 end

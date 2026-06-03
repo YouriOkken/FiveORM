@@ -21,7 +21,7 @@ function DbSet.New(tableName)
         return self
     end
 
-    function self.ToListAsync(_)
+    function self.ToList(_)
         local query = string.format('SELECT * FROM `%s`', self._table)
 
         if (#self._wheres > 0) then -- if where table is not empty, add it to the query

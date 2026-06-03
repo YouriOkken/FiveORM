@@ -11,7 +11,8 @@ function DbSet.New(tableName)
     local self = {
         _table = tableName,
         _wheres = {},   -- list of conditions
-        _params = {}    -- list of values for ? placeholders
+        _params = {},    -- list of values for ? placeholders,
+        _query = nil -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
     }
 
     function self.Where(_, column, value)
@@ -22,7 +23,14 @@ function DbSet.New(tableName)
     end
 
     function self.ToList(_)
-        local query = string.format('SELECT * FROM `%s`', self._table)
+        local query
+        if (self._query == nil) then
+            query = string.format('SELECT * FROM `%s`', self._table)
+        else 
+            query = self._query
+        end
+
+        print("query: " .. query)
 
         if (#self._wheres > 0) then -- if where table is not empty, add it to the query
             local whereClause = "WHERE "
@@ -35,9 +43,19 @@ function DbSet.New(tableName)
             query = query .. " " .. whereClause -- add where clause to query
         end
 
+        print("final query: " .. query)
         -- we dont need to add the params since oxmysql will handle that for us when we pass the query and params to it
         local response = Wrapper.fetchAll(query, self._params)
         return response
+    end
+
+    function self.Select(_, ...)
+        local args = {...}
+        local columns = table.concat(args, ", ")
+
+        local query = string.format('SELECT %s FROM `%s`', columns, self._table)
+        self._query = query
+        return self
     end
 
     return self

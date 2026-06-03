@@ -16,6 +16,8 @@ function DbSet.New(tableName)
     }
 
     function self.Where(_, column, value)
+        DbHelperFunctions.findColumn(self._table, column)
+
         table.insert(self._wheres, string.format('`%s` = ?', column))
         table.insert(self._params, value)
 
@@ -51,6 +53,9 @@ function DbSet.New(tableName)
 
     function self.Select(_, ...)
         local args = {...}
+        for _, column in ipairs(args) do
+            DbHelperFunctions.findColumn(self._table, column)
+        end
         local columns = table.concat(args, ", ")
 
         local query = string.format('SELECT %s FROM `%s`', columns, self._table)

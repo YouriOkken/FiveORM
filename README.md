@@ -7,13 +7,14 @@ for things like Where clauses in entity form.
 
 ## Installation
 
-1. Drop the `FiveORM` folder into your `resources` folder
-2. Add to your `server.cfg`:
+1. Download the latest version from the [latest release page](https://github.com/YouriOkken/FiveORM/releases/latest)
+2. Drop the `FiveORM` folder into your `resources` folder
+3. Add to your `server.cfg`:
    ```
    ensure FiveORM
    ensure my-resource   # FiveORM must start first
    ```
-3. Make sure `oxmysql` or `mysql-async` is already running
+4. Make sure `oxmysql` or `mysql-async` is already running
 
 ## Setting entity
 ```lua

@@ -25,6 +25,8 @@ I am also working on returning the right data/returning anything in general
 ## Things I will be working on
 Things I am going to be working on!
 
+- Adding `mysql-async` support
+
 ### Query building
 - FirstOrDefault - returns first match or nil
 - OrderBy / OrderByDescending

@@ -26,6 +26,7 @@ local entity = exports['FiveORM']:DbSet(tablename)
 - Where clauses (stackable)
 - Select
 - Insert
+- Include
 
 ### ToListAsync
 To get all the data of an table, you can use the ToListAsync() function Included when setting an Entity
@@ -56,6 +57,15 @@ Returns: The id of the newly made record if succesfull, otherwise nil
 local entity = exports['FiveORM']:DbSet(tablename)
 local playerId = entity:Add({ name = 'John Doe', cash = 100 })
 print("Player added with ID: " .. tostring(playerId))
+```
+
+### Include
+To make an include to another table you can use the Include() function
+Mind, the parameter is the foreign key column in the <b>base</b> table
+
+```lua
+local orders = exports['FiveORM']:DbSet('orders')
+local results = orders:Include("player_id"):ToList()
 ```
 
 ## Example

@@ -6,7 +6,7 @@ DbSet = {}
 -- DbSet.__index = DbSet
 
 function DbSet.New(tableName)
-    DbHelperFunctions.findTable(tableName) -- check if the table exists in the database, if not, throw an error
+    DbHelperFunctions.doesTableExist(tableName) -- check if the table exists in the database, if not, throw an error
 
     local self = {
         _table = tableName,
@@ -17,7 +17,7 @@ function DbSet.New(tableName)
     }
 
     function self.Where(_, column, value)
-        DbHelperFunctions.findColumn(self._table, column)
+        DbHelperFunctions.doesColumnExist(self._table, column)
 
         table.insert(self._wheres, string.format('`%s` = ?', column))
         table.insert(self._params, value)
@@ -33,7 +33,7 @@ function DbSet.New(tableName)
             query = self._query
         end
 
-        print("query: " .. query)
+        Config.log("query: " .. query)
 
         if (#self._joins > 0) then
             for _, join in ipairs(self._joins) do
@@ -52,7 +52,7 @@ function DbSet.New(tableName)
             query = query .. " " .. whereClause -- add where clause to query
         end
 
-        print("final query: " .. query)
+        Config.log("final query: " .. query)
         -- we dont need to add the params since oxmysql will handle that for us when we pass the query and params to it
         local response = Wrapper.fetchAll(query, self._params)
         return response
@@ -61,7 +61,7 @@ function DbSet.New(tableName)
     function self.Select(_, ...)
         local args = {...}
         for _, column in ipairs(args) do
-            DbHelperFunctions.findColumn(self._table, column)
+            DbHelperFunctions.doesColumnExist(self._table, column)
         end
         local columns = table.concat(args, ", ")
 
@@ -72,7 +72,7 @@ function DbSet.New(tableName)
 
     -- @param fk = the foreign key column in the *base* table (e.g. player_id)
     function self.Include(_, fk)
-        DbHelperFunctions.findColumn(self._table, fk)
+        DbHelperFunctions.doesColumnExist(self._table, fk)
 
         local referencedTable, referencedColumn = DbHelperFunctions.getJoinedTable(self._table, fk)
 
@@ -83,7 +83,7 @@ function DbSet.New(tableName)
             self._table, fk
         )
 
-        print("join: " .. join)
+        Config.log("join: " .. join)
         table.insert(self._joins, join)
         return self
     end
@@ -94,7 +94,7 @@ function DbSet.New(tableName)
         local params = {}
 
         for column, value in pairs(data) do
-            DbHelperFunctions.findColumn(self._table, column)
+            DbHelperFunctions.doesColumnExist(self._table, column)
             table.insert(columns, string.format('`%s`', column))
             table.insert(placeholders, '?')
             table.insert(params, value)
@@ -108,6 +108,28 @@ function DbSet.New(tableName)
         )
 
         return Wrapper.execute(query, params)
+    end
+
+    function self.Delete(_, value, column)
+        local query
+
+        if column == nil then
+            -- Delete(id) -- assume column is the id value
+            column = DbHelperFunctions.getPrimaryKey(self._table)
+            Config.log("column was nil")
+            Config.log("primary key: " .. column)
+        else
+            -- Delete(column, value)
+            Config.log("column was not nil")
+            Config.log("column: " .. column)
+            DbHelperFunctions.doesColumnExist(self._table, column)
+        end
+
+        Config.log("value: " .. tostring(value))
+
+        query = string.format('DELETE FROM `%s` WHERE `%s` = ?', self._table, column)
+        Config.log("delete query: " .. query)
+        Wrapper.execute(query, { value })
     end
 
     return self

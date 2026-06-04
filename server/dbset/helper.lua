@@ -1,6 +1,6 @@
 DbHelperFunctions = {}
 
-function DbHelperFunctions.findTable(tableName)
+function DbHelperFunctions.doesTableExist(tableName)
     if type(tableName) ~= 'string' then
         error('Table name must be a string')
     end
@@ -15,7 +15,7 @@ function DbHelperFunctions.findTable(tableName)
     end
 end
 
-function DbHelperFunctions.findColumn(tableName, columnName)
+function DbHelperFunctions.doesColumnExist(tableName, columnName)
     if type(tableName) ~= 'string' then
         error('Table name must be a string')
     end
@@ -32,6 +32,23 @@ function DbHelperFunctions.findColumn(tableName, columnName)
     if not result or #result == 0 then
         error('Column "' .. columnName .. '" does not exist in table "' .. tableName .. '"')
     end
+end
+
+function DbHelperFunctions.getPrimaryKey(tableName)
+    if type(tableName) ~= 'string' then
+        error('Table name must be a string')
+    end
+
+    local result = Wrapper.fetchAll(
+        string.format("SHOW KEYS FROM `%s` WHERE Key_name = 'PRIMARY'", tableName),
+        {}
+    )
+
+    if not result or #result == 0 then
+        error('Table "' .. tableName .. '" does not have a primary key')
+    end
+
+    return result[1].Column_name
 end
 
 -- @param tableName = name of the table to get the primary key of

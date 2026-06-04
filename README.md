@@ -34,7 +34,6 @@ Things I am going to be working on!
 - Any - returns true/false if record exists
 
 ### Data
-- Update
 - ThenInclude - nested includes like users → orders → products
 
 ### Schema / migrations
@@ -51,6 +50,7 @@ Migrate — auto create tables based on a schema definition
 - [Insert](#insert)
 - [Include](#include)
 - [Delete](#delete)
+- [Update](#update)
 
 ## Setting entity
 Setting an entity will define what table will be used and gives back the functions
@@ -110,6 +110,15 @@ Column can be nil, if this is the case the script will check for the primary key
 local orders = exports['FiveORM']:DbSet('orders')
 orders:Delete(6) -- the scripts will check for the primary key column of 'orders'
 orders:Delete(100, 'total') -- the script will check for a column 'total' in 'orders'
+```
+
+### Update
+To update 1 or more rows, you can use the Update() function
+This functions needs a :Where() clause to prevent mass-update
+
+```lua
+local orders = exports['FiveORM']:DbSet('orders')
+local results = orders:Where('id', 1):Update('total', 15)
 ```
 
 ## Example

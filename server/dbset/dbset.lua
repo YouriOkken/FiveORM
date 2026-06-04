@@ -12,7 +12,8 @@ function DbSet.New(tableName)
         _table = tableName,
         _wheres = {},   -- list of conditions
         _params = {},    -- list of values for ? placeholders,
-        _query = nil -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
+        _query = nil, -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
+        _joins = {} -- if Include function is called, this will be set to the query to include
     }
 
     function self.Where(_, column, value)
@@ -33,6 +34,12 @@ function DbSet.New(tableName)
         end
 
         print("query: " .. query)
+
+        if (#self._joins > 0) then
+            for _, join in ipairs(self._joins) do
+                query = query .. " " .. join
+            end
+        end
 
         if (#self._wheres > 0) then -- if where table is not empty, add it to the query
             local whereClause = "WHERE "
@@ -58,8 +65,26 @@ function DbSet.New(tableName)
         end
         local columns = table.concat(args, ", ")
 
-        local query = string.format('SELECT %s FROM `%s`', columns, self._table)
+        local query = string.format('SELECT %s.%s FROM `%s`', self._table, columns, self._table)
         self._query = query
+        return self
+    end
+
+    -- @param fk = the foreign key column in the *base* table (e.g. player_id)
+    function self.Include(_, fk)
+        DbHelperFunctions.findColumn(self._table, fk)
+
+        local referencedTable, referencedColumn = DbHelperFunctions.getJoinedTable(self._table, fk)
+
+        local join = string.format(
+            'LEFT JOIN `%s` ON `%s`.`%s` = `%s`.`%s`',
+            referencedTable,
+            referencedTable, referencedColumn,
+            self._table, fk
+        )
+
+        print("join: " .. join)
+        table.insert(self._joins, join)
         return self
     end
 

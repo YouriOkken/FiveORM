@@ -11,7 +11,7 @@ function DbSet.New(tableName)
     local self = {
         _table = tableName,
         _wheres = {},   -- list of conditions
-        _params = {},    -- list of values for ? placeholders,
+        _whereParams = {},   -- list of values for WHERE ? placeholders
         _query = nil, -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
         _joins = {} -- if Include function is called, this will be set to the query to include
     }
@@ -20,7 +20,7 @@ function DbSet.New(tableName)
         DbHelperFunctions.doesColumnExist(self._table, column)
 
         table.insert(self._wheres, string.format('`%s` = ?', column))
-        table.insert(self._params, value)
+        table.insert(self._whereParams, value)
 
         return self
     end
@@ -36,25 +36,16 @@ function DbSet.New(tableName)
         Config.log("query: " .. query)
 
         if (#self._joins > 0) then
-            for _, join in ipairs(self._joins) do
-                query = query .. " " .. join
-            end
+            query = DbHelperFunctions.addJoins(query, self._joins)
         end
 
         if (#self._wheres > 0) then -- if where table is not empty, add it to the query
-            local whereClause = "WHERE "
-            for i, condition in ipairs(self._wheres) do -- loop through conditions and add them to the where clause
-                whereClause = whereClause .. condition -- add condition to where clause
-                if i < #self._wheres then -- if it's not the last condition, add AND
-                    whereClause = whereClause .. " AND " 
-                end
-            end
-            query = query .. " " .. whereClause -- add where clause to query
+            query = DbHelperFunctions.addWhere(query, self._wheres)
         end
 
         Config.log("final query: " .. query)
         -- we dont need to add the params since oxmysql will handle that for us when we pass the query and params to it
-        local response = Wrapper.fetchAll(query, self._params)
+        local response = Wrapper.fetchAll(query, self._whereParams)
         return response
     end
 
@@ -107,7 +98,7 @@ function DbSet.New(tableName)
             table.concat(placeholders, ", ")
         )
 
-        return Wrapper.execute(query, params)
+        return Wrapper.insert(query, params)
     end
 
     function self.Delete(_, value, column)
@@ -129,7 +120,25 @@ function DbSet.New(tableName)
 
         query = string.format('DELETE FROM `%s` WHERE `%s` = ?', self._table, column)
         Config.log("delete query: " .. query)
-        Wrapper.execute(query, { value })
+        Wrapper.delete(query, { value })
+    end
+
+    function self.Update(_, column, value)
+        if (self._wheres == nil or #self._wheres == 0) then
+            error('Update operation requires at least one Where condition to prevent mass updates.')
+        end
+        if (self._whereParams == nil or #self._whereParams == 0) then
+            error('Where conditions must have corresponding parameters for Update operation.')
+        end
+
+        DbHelperFunctions.doesColumnExist(self._table, column)
+
+        local query = string.format('UPDATE `%s` SET `%s` = ? ', self._table, column)
+        query = DbHelperFunctions.addWhere(query, self._wheres)
+
+        Config.log("final update query: " .. query)
+        Config.log("update params: " .. json.encode(self._whereParams) .. ", " .. tostring(value))
+        Wrapper.update(query, { value, table.unpack(self._whereParams) })
     end
 
     return self

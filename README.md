@@ -1,12 +1,14 @@
 # FiveORM for FiveM
 > EF Core–style Entity Framework in Lua — built for FiveM resources
 
-A Entity Framework Core inspired SQL framework for FiveM, giving the opportunity
+An Entity Framework Core inspired SQL framework for FiveM, giving the opportunity
 for things like Where clauses in entity form.
 ---
 
-## Installation
+## Requirements
+- [OXmysql](https://github.com/overextended/oxmysql)
 
+## Installation
 1. Download the latest version from the [latest release page](https://github.com/YouriOkken/FiveORM/releases/latest)
 2. Drop the `FiveORM` folder into your `resources` folder
 3. Add to your `server.cfg`:
@@ -14,14 +16,13 @@ for things like Where clauses in entity form.
    ensure FiveORM
    ensure my-resource   # FiveORM must start first
    ```
-4. Make sure `oxmysql` or `mysql-async` is already running
+4. Make sure `oxmysql` is already running
 
-## Setting entity
-```lua
-local entity = exports['FiveORM']:DbSet(tablename)
-```
+## Validations
+Right now if a table or column isn't found, an error will be thrown in the server console. I will try to work this out better in the future
+I am also working on returning the right data/returning anything in general
 
-## Functionalies
+## Functionalities
 - ToList (getting all data from a table)
 - Where clauses (stackable)
 - Select
@@ -29,25 +30,32 @@ local entity = exports['FiveORM']:DbSet(tablename)
 - Include
 - Delete
 
-### ToListAsync
-To get all the data of an table, you can use the ToListAsync() function Included when setting an Entity
+## Setting entity
+Setting an entity will define what table will be used and gives back the functions
+
 ```lua
 local entity = exports['FiveORM']:DbSet(tablename)
-local data = entity:ToListAsync();
+```
+
+### ToList
+To get all the data of a table, you can use the ToList() function Included when setting an Entity
+```lua
+local entity = exports['FiveORM']:DbSet(tablename)
+local data = entity:ToList();
 ```
 
 ### Where clause
-To filter data, you can add the :Where(column, value). <b>These are stackable!</b>
+To filter data, you can add the :Where(column, value). **These are stackable!**
 ```lua
 local entity = exports['FiveORM']:DbSet(tablename)
-local data = entity:Where('name', 'John Doe'):Where('money', 100):ToListAsync();
+local data = entity:Where('name', 'John Doe'):Where('money', 100):ToList();
 ```
 
 ### Select
 To select specific properties you can add the :Select() function.
 ```lua
 local entity = exports['FiveORM']:DbSet(tablename)
-local data = entity:Where('name', 'John Doe'):Select('id', 'name'):ToListAsync();
+local data = entity:Where('name', 'John Doe'):Select('id', 'name'):ToList();
 ```
 
 ### Insert
@@ -62,7 +70,7 @@ print("Player added with ID: " .. tostring(playerId))
 
 ### Include
 To make an include to another table you can use the Include() function
-Mind, the parameter is the foreign key column in the <b>base</b> table
+Mind, the parameter is the foreign key column in the **base** table
 
 ```lua
 local orders = exports['FiveORM']:DbSet('orders')
@@ -78,13 +86,13 @@ Column can be nil, if this is the case the script will check for the primary key
 
 ```lua
 local orders = exports['FiveORM']:DbSet('orders')
-local results = orders:Delete(6) -- the scripts will check for the primary key column of 'orders'
-local results = orders:Delete(100, 'total') -- the script will check for a column 'total' in 'orders'
+orders:Delete(6) -- the scripts will check for the primary key column of 'orders'
+orders:Delete(100, 'total') -- the script will check for a column 'total' in 'orders'
 ```
 
 ## Example
 ```lua
 local players = exports['FiveORM']:DbSet('players')
-local results = players:Where('money', 200):Where('active', true):ToListAsync()
+local results = players:Where('money', 200):Where('active', true):ToList()
 print(json.encode(results))
 ```

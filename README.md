@@ -19,8 +19,28 @@ for things like Where clauses in entity form.
 4. Make sure `oxmysql` is already running
 
 ## Validations
-Right now if a table or column isn't found, an error will be thrown in the server console. I will try to work this out better in the future
+Right now if a table or column isn't found, an error will be thrown in the server console. I will try to work this out better in the future<br>
 I am also working on returning the right data/returning anything in general
+
+## Things I will be working on
+Things I am going to be working on!
+
+### Query building
+- FirstOrDefault - returns first match or nil
+- OrderBy / OrderByDescending
+- Count
+- Any - returns true/false if record exists
+
+### Data
+- Update
+- ThenInclude - nested includes like users → orders → products
+
+### Schema / migrations
+Migrate — auto create tables based on a schema definition
+
+### Convenience
+- FindById - shorthand for Where id = x + FirstOrDefault
+- Exists - probably going to be combined with Any() but with an column option (like delete function)
 
 ## Functionalities
 - [ToList](#tolist)

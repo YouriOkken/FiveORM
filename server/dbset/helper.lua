@@ -69,3 +69,23 @@ function DbHelperFunctions.getJoinedTable(tableName, columnName)
 
     return result[1].REFERENCED_TABLE_NAME, result[1].REFERENCED_COLUMN_NAME
 end
+
+function DbHelperFunctions.addWhere(query, wheres)
+    local whereClause = "WHERE "
+    for i, condition in ipairs(wheres) do -- loop through conditions and add them to the where clause
+        whereClause = whereClause .. condition -- add condition to where clause
+        if i < #wheres then -- if it's not the last condition, add AND
+            whereClause = whereClause .. " AND " 
+        end
+    end
+    query = query .. " " .. whereClause
+    return query
+end
+
+function DbHelperFunctions.addJoins(query, joins)
+    for _, join in ipairs(joins) do
+        query = query .. " " .. join
+    end
+
+    return query
+end

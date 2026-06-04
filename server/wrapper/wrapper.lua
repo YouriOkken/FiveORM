@@ -9,6 +9,15 @@ function Wrapper.fetchAll(query, params)
     return result
 end
 
+function Wrapper.fetchSingle(query, params)
+    local result
+    if (Config.Provider == 'oxmysql') then
+        result = MySQL.single.await(query, params)
+    end
+
+    return result
+end
+
 function Wrapper.insert(query, params)
     local result
     if (Config.Provider == 'oxmysql') then

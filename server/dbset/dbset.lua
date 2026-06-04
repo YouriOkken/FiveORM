@@ -25,7 +25,7 @@ function DbSet.New(tableName)
         return self
     end
 
-    function self.ToList(_)
+    local function getQuery() 
         local query
         if (self._query == nil) then
             query = string.format('SELECT * FROM `%s`', self._table)
@@ -44,8 +44,20 @@ function DbSet.New(tableName)
         end
 
         Config.log("final query: " .. query)
-        -- we dont need to add the params since oxmysql will handle that for us when we pass the query and params to it
+
+        return query
+    end
+
+    function self.ToList(_)
+        local query = getQuery() -- get the query with the where conditions and joins applied
         local response = Wrapper.fetchAll(query, self._whereParams)
+        return response
+    end
+
+    function self.First(_)
+        local query = getQuery() .. ' LIMIT 1'
+        Config.log("to list query: " .. query)
+        local response = Wrapper.fetchSingle(query, self._whereParams)
         return response
     end
 

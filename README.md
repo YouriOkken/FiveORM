@@ -23,12 +23,12 @@ Right now if a table or column isn't found, an error will be thrown in the serve
 I am also working on returning the right data/returning anything in general
 
 ## Functionalities
-- ToList (getting all data from a table)
-- Where clauses (stackable)
-- Select
-- Insert
-- Include
-- Delete
+- [ToList](#tolist)
+- [Where](#where-clause)
+- [Select](#select)
+- [Insert](#insert)
+- [Include](#include)
+- [Delete](#delete)
 
 ## Setting entity
 Setting an entity will define what table will be used and gives back the functions

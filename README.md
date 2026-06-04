@@ -27,6 +27,7 @@ local entity = exports['FiveORM']:DbSet(tablename)
 - Select
 - Insert
 - Include
+- Delete
 
 ### ToListAsync
 To get all the data of an table, you can use the ToListAsync() function Included when setting an Entity
@@ -66,6 +67,19 @@ Mind, the parameter is the foreign key column in the <b>base</b> table
 ```lua
 local orders = exports['FiveORM']:DbSet('orders')
 local results = orders:Include("player_id"):ToList()
+```
+
+### Delete
+To delete 1 or more rows, you can use the Delete() function
+This function accepts 2 parameters
+1. value
+2. column
+Column can be nil, if this is the case the script will check for the primary key of the set table
+
+```lua
+local orders = exports['FiveORM']:DbSet('orders')
+local results = orders:Delete(6) -- the scripts will check for the primary key column of 'orders'
+local results = orders:Delete(100, 'total') -- the script will check for a column 'total' in 'orders'
 ```
 
 ## Example

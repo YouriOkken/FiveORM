@@ -17,6 +17,7 @@ for things like Where clauses in entity form.
    ensure my-resource   # FiveORM must start first
    ```
 4. Make sure `oxmysql` is already running
+5. (Optional) if you want to use migrations, make sure there is a `migrations` folder in the root directory of the resource
 
 ## Validations
 Right now if a table or column isn't found, an error will be thrown in the server console. I will try to work this out better in the future<br>

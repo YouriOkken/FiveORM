@@ -18,5 +18,6 @@ server_scripts {
     'server/dbset/query/executor.lua',
     'server/dbset/commands.lua',
     'server/dbset/dbset.lua',
+    'server/migrations/migrator.lua',
     'server/exports.lua',
 }

@@ -1,0 +1,1 @@
+CREATE TABLE `Test` (`active` bool NOT NULL, `id` int PRIMARY KEY NOT NULL, `name` varchar(100))

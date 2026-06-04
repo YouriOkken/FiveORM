@@ -61,6 +61,7 @@ print("Player added with ID: " .. tostring(playerId))
 
 ### Include
 To make an include to another table you can use the Include() function
+Mind, the parameter is the foreign key column in the <b>base</b> table
 
 ```lua
 local orders = exports['FiveORM']:DbSet('orders')

@@ -28,7 +28,6 @@ Things I am going to be working on!
 - Adding `mysql-async` support
 
 ### Query building
-- FirstOrDefault - returns first match or nil
 - OrderBy / OrderByDescending
 - Count
 - Any - returns true/false if record exists
@@ -51,6 +50,7 @@ Migrate — auto create tables based on a schema definition
 - [Include](#include)
 - [Delete](#delete)
 - [Update](#update)
+- [First](#first)
 
 ## Setting entity
 Setting an entity will define what table will be used and gives back the functions
@@ -120,6 +120,16 @@ This functions needs a :Where() clause to prevent mass-update
 local orders = exports['FiveORM']:DbSet('orders')
 local results = orders:Where('id', 1):Update('total', 15)
 ```
+
+### First
+To get the first row of an query, you can use the First() function in the same way as the ToList() function
+
+```lua
+local players = exports['FiveORM']:DbSet('players')
+local results = players:Where('money', 200):Where('active', true):First()
+print(json.encode(results))
+```
+
 
 ## Example
 ```lua

@@ -14,6 +14,9 @@ server_scripts {
     'server/wrapper/wrapper.lua',
     'server/dbset/helper.lua',
     'server/functions.lua',
+    'server/dbset/query/builder.lua',
+    'server/dbset/query/executor.lua',
+    'server/dbset/commands.lua',
     'server/dbset/dbset.lua',
     'server/exports.lua',
 }

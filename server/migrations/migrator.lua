@@ -1,22 +1,48 @@
--- CREATE TABLE Persons (
---   PersonID int PRIMARY KEY,
---   LastName varchar(255) NOT NULL,
---   FirstName varchar(255),
---   Address varchar(255),
---   City varchar(255)
--- );
-local function generateFile(tableName, query) 
+local function generateId()
+    math.randomseed(os.time())
+    return math.random(100000000, 999999999)
+end
+
+local function isDir(path)
+    local file = path .. "/"
+    local ok, err, code = os.rename(file, file)
+    return ok, err, code
+end
+
+Migrator = {}
+-- TODO: Refactor so it checks wether the directory exists and if not then throws an error the migrations folder doesnt exist
+function Migrator.generateFile(name, queries)
+    local id = generateId()
     local path = GetResourcePath(GetCurrentResourceName())
-    local file, err = io.open(string.format("%s/migrations/%s.sql", path, tableName), "w")
-    if not file then
-        print("Error opening file: " .. err .. ". This was likely caused by there being no migrations folder in the root directory of the resource")
+    path = string.format("%s/migrations", path)
+    local pathExists, pathError, code = isDir(path)
+
+    if not pathExists then
+        if code == 13 then
+            log("Directory was found, but permissions are missing") -- this shouldn't even be triggered, but just in case
+        else 
+            print(string.format("Path %s not found. Please make sure this is available", path))
+        end
+
         return
     end
-    file:write(query)
+
+    if not name then name = "migration" end
+
+    local file, err = io.open(string.format("%s/%s.sql", path, string.format("%s_%s", id, name)), "w")
+    if not file then
+        print("Error opening file: " .. err .. ".")
+        return
+    end
+    
+    for _, query in ipairs(queries) do
+        file:write(query .. "\n\n")
+    end
+
     file:close()
 end
 
-local function build(properties, tableName)
+function Migrator.build(properties, tableName)
     local query = string.format('CREATE TABLE `%s` (', tableName)
     local lines = {}
 
@@ -30,9 +56,11 @@ local function build(properties, tableName)
 
         if options.primaryKey ~= nil then
             line = line .. ' PRIMARY KEY'
+        elseif options.unique ~= nil then
+            line = line .. ' UNIQUE'
         end
 
-        if not options.nullable then
+        if options.nullable == false then
             line = line .. ' NOT NULL'
         end
 
@@ -40,26 +68,6 @@ local function build(properties, tableName)
     end
 
     query = query .. table.concat(lines, ", ") .. ")"
-    print("query: " .. query)
-    generateFile(tableName, query)
-    -- Wrapper.delete(query, { })
+    return query
 end
-
-RegisterCommand("migration", function(source, args, rawCommand)
-    local resource = args[1]
-    Config.log("resource: " .. resource)
-    local resourceState = GetResourceState(resource)
-    Config.log("resourceState: " .. resourceState)
-
-    if (resourceState ~= "started") then
-        error("Resource is not found or is in a not supported state.")
-    end
-
-    local entities = {}
-    entities = exports[resource]:SetEntities()
-    print(json.encode(entities))
-    for _, entity in ipairs(entities) do
-        build(entity.properties, entity.tableName)
-    end
-end, true)
 

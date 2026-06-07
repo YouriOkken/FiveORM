@@ -20,8 +20,7 @@ for things like Where clauses in entity form.
 5. (Optional) if you want to use migrations, make sure there is a `migrations` folder in the root directory of the resource
 
 ## Validations
-Right now if a table or column isn't found, an error will be thrown in the server console. I will try to work this out better in the future<br>
-I am also working on returning the right data/returning anything in general
+Right now if a table or column isn't found, an error will be thrown in the server console. I will try to work this out better in the future
 
 ## Things I will be working on
 Things I am going to be working on!
@@ -36,14 +35,12 @@ Things I am going to be working on!
 ### Data
 - ThenInclude - nested includes like users → orders → products
 
-### Schema / migrations
-Migrate — auto create tables based on a schema definition
-
 ### Convenience
 - FindById - shorthand for Where id = x + FirstOrDefault
 - Exists - probably going to be combined with Any() but with an column option (like delete function)
 
 ## Functionalities
+- [Setting Entity](#setting-entity)
 - [ToList](#tolist)
 - [Where](#where-clause)
 - [Select](#select)
@@ -52,8 +49,9 @@ Migrate — auto create tables based on a schema definition
 - [Delete](#delete)
 - [Update](#update)
 - [First](#first)
+- [Migrations](#migration)
 
-## Setting entity
+### Setting entity
 Setting an entity will define what table will be used and gives back the functions
 
 ```lua
@@ -130,6 +128,108 @@ local players = exports['FiveORM']:DbSet('players')
 local results = players:Where('money', 200):Where('active', true):First()
 print(json.encode(results))
 ```
+
+### Migration
+Since this resource is inspired by the Entity Framework from C#, it also supports migrations.
+
+If you don't know what these are: You can design a Lua table as a database table!
+
+#### Properties
+
+When defining an entity for migrations, each property supports the following options:
+
+
+| Option | Type | Required | Description |
+|--------|------|----------|-------------|
+| `type` | string | Yes | The SQL column type (e.g. `int`, `varchar`, `bool`) |
+| `nullable` | boolean | Yes | Whether the column allows NULL values |
+| `maxlength` | number | No | Max length for `varchar` columns |
+| `primaryKey` | boolean | No | Marks the column as the PRIMARY KEY |
+| `unique` | boolean | No | Marks the column as UNIQUE |
+
+#### Example of properties
+
+```lua
+properties = {
+    id = {
+        type = 'int',
+        nullable = false,
+        primaryKey = true
+    },
+    name = {
+        type = 'varchar',
+        nullable = true,
+        maxlength = 100,
+        unique = true
+    },
+    active = {
+        type = 'bool',
+        nullable = false
+    }
+}
+```
+
+When running the migration adding command, the script will search for export:
+`SetEntities()`
+
+#### Example of creating a migration
+```lua
+function Users()
+    local entities = {}
+    local entity = {
+        tableName = 'Test',
+        properties = {
+            id = {
+                type = 'int',
+                nullable = false,
+                primaryKey = true
+            },
+            name = {
+                type = 'varchar',
+                nullable = true,
+                maxlength = 100
+            },
+            active = {
+                type = 'bool',
+                nullable = false,
+            }
+        }
+    }
+
+    table.insert(entities, entity)
+
+    entity = {
+        tableName = 'Blub',
+        properties = {
+            id = {
+                type = 'int',
+                nullable = false,
+                primaryKey = true
+            },
+            order = {
+                type = 'varchar',
+                nullable = true,
+                maxlength = 100
+            },
+        }
+    }
+
+    table.insert(entities, entity)
+
+    return entities
+end
+
+-- this export will be called by the script
+exports("SetEntities", function()
+    return Users()
+end)
+```
+
+To create a migration
+`/migration (script of entities) (migration name)`
+
+To run all the migrations available
+`/run-migrations`
 
 
 ## Example

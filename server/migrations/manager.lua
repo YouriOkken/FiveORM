@@ -43,7 +43,7 @@ AddEventHandler('onResourceStart', function(resourceName)
                 if code == 13 then
                     log("Directory was found, but permissions are missing") -- this shouldn't even be triggered, but just in case
                 else 
-                    print(string.format("Path %s not found. Please make sure this is available", path))
+                    log(string.format("Path %s not found. Please make sure this is available", path))
                 end
 
                 return

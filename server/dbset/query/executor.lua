@@ -40,7 +40,6 @@ function FindById(self, id)
     local Builder = Builder.GetFunctions(self)
     Builder.Where(self, DbHelperFunctions.getPrimaryKey(self._table), id)
     local query = getQuery(self) .. ' LIMIT 1'
-    print("QUERY: " .. query .. " param: " .. id)
     local response = Wrapper.fetchSingle(query, { id })
     return response
 end

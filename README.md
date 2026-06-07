@@ -47,6 +47,7 @@ Things I am going to be working on!
 - [First](#first)
 - [Migrations](#migration)
 - [OrderBy](#orderby--orderbydescending)
+- [FindById](#findbyid)
 
 ### Setting entity
 Setting an entity will define what table will be used and gives back the functions
@@ -244,7 +245,17 @@ To run all the migrations available
 To order the data you can use either the OrderBy() function or the OrderByDesc() function
 
 ```lua
+local orders = exports['FiveORM']:DbSet('orders')
 local results = orders:OrderBy():ToList()
+print(json.encode(results))
+```
+
+### FindById
+To find a record by the primary key you can use the FindById() function
+
+```lua
+local orders = exports['FiveORM']:DbSet('orders')
+local results = orders:FindById(1)
 print(json.encode(results))
 ```
 

@@ -89,3 +89,15 @@ function DbHelperFunctions.addJoins(query, joins)
 
     return query
 end
+
+function DbHelperFunctions.addOrderBy(query, column)
+    query = query .. " " .. string.format("ORDER BY %s", column)
+    
+    return query
+end
+
+function DbHelperFunctions.addOrderByDesc(query, column)
+    query = query .. " " .. string.format("ORDER BY %s DESC", column)
+    
+    return query
+end

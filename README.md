@@ -27,11 +27,6 @@ Things I am going to be working on!
 
 - Adding `mysql-async` support
 
-### Query building
-- OrderBy / OrderByDescending
-- Count
-- Any - returns true/false if record exists
-
 ### Data
 - ThenInclude - nested includes like users → orders → products
 
@@ -51,6 +46,7 @@ Things I am going to be working on!
 - [Update](#update)
 - [First](#first)
 - [Migrations](#migration)
+- [OrderBy](#orderby--orderbydescending)
 
 ### Setting entity
 Setting an entity will define what table will be used and gives back the functions
@@ -244,6 +240,13 @@ To create a migration
 To run all the migrations available
 `/run-migrations`
 
+### OrderBy / OrderByDescending
+To order the data you can use either the OrderBy() function or the OrderByDesc() function
+
+```lua
+local results = orders:OrderBy():ToList()
+print(json.encode(results))
+```
 
 ## Example
 ```lua

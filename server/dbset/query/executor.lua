@@ -14,6 +14,12 @@ local function getQuery(self)
         query = DbHelperFunctions.addWhere(query, self._wheres)
     end
 
+    if self._orderBy ~= nil then
+        query = DbHelperFunctions.addOrderBy(query, self._orderBy)
+    elseif self._orderByDesc ~= nil then
+        query = DbHelperFunctions.addOrderByDesc(query, self._orderByDesc)
+    end
+
     return query
 end
 

@@ -31,7 +31,6 @@ Things I am going to be working on!
 - ThenInclude - nested includes like users → orders → products
 
 ### Convenience
-- FindById - shorthand for Where id = x + FirstOrDefault
 - Exists - probably going to be combined with Any() but with an column option (like delete function)
 
 ## Functionalities

@@ -39,7 +39,7 @@ function Delete(self, value, column)
 
     query = string.format('DELETE FROM `%s` WHERE `%s` = ?', self._table, column)
     Config.log("delete query: " .. query)
-    Wrapper.delete(query, { value })
+    Wrapper.execute(query, { value })
 end
 
 function Update(self, column, value)
@@ -57,7 +57,7 @@ function Update(self, column, value)
 
     Config.log("final update query: " .. query)
     Config.log("update params: " .. json.encode(self._whereParams) .. ", " .. tostring(value))
-    Wrapper.update(query, { value, table.unpack(self._whereParams) })
+    Wrapper.execute(query, { value, table.unpack(self._whereParams) })
 end
 
 Commands = {}

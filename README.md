@@ -31,7 +31,7 @@ Things I am going to be working on!
 - ThenInclude - nested includes like users → orders → products
 
 ### Convenience
-- Exists - probably going to be combined with Any() but with an column option (like delete function)
+- Exists - returns boolean wether record exists
 
 ## Functionalities
 - [Setting Entity](#setting-entity)

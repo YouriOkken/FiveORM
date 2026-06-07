@@ -12,7 +12,8 @@ end
 function Wrapper.fetchSingle(query, params)
     local result
     if (Config.Provider == 'oxmysql') then
-        result = MySQL.single.await(query, params)
+        -- uses MySQL.single instead of MySQL.Sync because of missing aliasses for this specific function
+        result = MySQL.single.await(query, params) 
     end
 
     return result
@@ -27,16 +28,8 @@ function Wrapper.insert(query, params)
     return result
 end
 
-function Wrapper.update(query, params)
-    local result
-    if (Config.Provider == 'oxmysql') then
-        result = MySQL.Sync.execute(query, params)
-    end
-
-    return result
-end
-
-function Wrapper.delete(query, params)
+-- update and delete
+function Wrapper.execute(query, params)
     local result
     if (Config.Provider == 'oxmysql') then
         result = MySQL.Sync.execute(query, params)
@@ -49,15 +42,6 @@ function Wrapper.transaction(queries, params)
     local result
     if (Config.Provider == 'oxmysql') then
         result = MySQL.Sync.transaction(queries, params)
-    end
-
-    return result
-end
-
-function Wrapper.execute(query, params)
-    local result
-    if (Config.Provider == 'oxmysql') then
-        result = MySQL.Sync.execute(query, params)
     end
 
     return result

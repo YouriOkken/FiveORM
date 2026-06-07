@@ -1,10 +1,13 @@
 Config = Config or {}
 
-Config.Provider = 'oxmysql' -- 'oxmysql' or 'mysql-async' <-- mysql-async not available yet
+Config.Provider = 'oxmysql'
 Config.Debug = true
+
+Config.Migrations = true
+Config.MigrationTable = "FiveORM_Migrations"
 
 function Config.log(msg)
     if Config.Debug then
-        print("[FiveORM] " .. msg)
+        print("[FiveORM Log] " .. msg)
     end
 end

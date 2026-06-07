@@ -39,7 +39,25 @@ end
 function Wrapper.delete(query, params)
     local result
     if (Config.Provider == 'oxmysql') then
-        result = MySQL.update.await(query, params)
+        result = MySQL.Sync.execute(query, params)
+    end
+
+    return result
+end
+
+function Wrapper.transaction(queries, params)
+    local result
+    if (Config.Provider == 'oxmysql') then
+        result = MySQL.Sync.transaction(queries, params)
+    end
+
+    return result
+end
+
+function Wrapper.execute(query, params)
+    local result
+    if (Config.Provider == 'oxmysql') then
+        result = MySQL.Sync.execute(query, params)
     end
 
     return result

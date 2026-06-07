@@ -30,10 +30,22 @@ function First(self)
     return response
 end
 
+function Count(self)
+    local query = string.format('SELECT COUNT(*) as count FROM `%s`', self._table)
+    
+    if #self._wheres > 0 then
+        query = DbHelperFunctions.addWhere(query, self._wheres)
+    end
+
+    local result = Wrapper.fetchSingle(query, self._whereParams)
+    return result.count
+end
+
 Executor = {}
 function Executor.GetFunctions(instance)
     return {
         ToList = function() return ToList(instance) end,
-        First = function() return First(instance) end
+        First = function() return First(instance) end,
+        Count = function() return Count(instance) end
     }
 end

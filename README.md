@@ -42,6 +42,7 @@ Things I am going to be working on!
 ## Functionalities
 - [Setting Entity](#setting-entity)
 - [ToList](#tolist)
+- [Count](#count)
 - [Where](#where-clause)
 - [Select](#select)
 - [Insert](#insert)
@@ -127,6 +128,18 @@ To get the first row of an query, you can use the First() function in the same w
 local players = exports['FiveORM']:DbSet('players')
 local results = players:Where('money', 200):Where('active', true):First()
 print(json.encode(results))
+```
+
+### Count
+To get the count of records, you can use the Count() function
+You can add a :Where() clause to this
+
+```lua
+local orders = exports['FiveORM']:DbSet('orders')
+local results = orders:Count()
+print(results)
+results = orders:Where('total', 10):Count()
+print(results)
 ```
 
 ### Migration

@@ -37,11 +37,37 @@ function Include(self, fk)
     return self
 end
 
+function OrderBy(self, column)
+    if column ~= nil then
+        DbHelperFunctions.doesColumnExist(self._table, column)
+    else 
+        column = DbHelperFunctions.getPrimaryKey(self._table)
+    end
+
+    self._orderBy = column
+
+    return self
+end
+
+function OrderByDesc(self, column)
+    if column ~= nil then
+        DbHelperFunctions.doesColumnExist(self._table, column)
+    else 
+        column = DbHelperFunctions.getPrimaryKey(self._table)
+    end
+
+    self._orderByDesc = column
+
+    return self
+end
+
 Builder = {}
 function Builder.GetFunctions(instance)
     return {
         Where = function(_, column, value) return Where(instance, column, value) end,
         Select = function(_, ...) return Select(instance, ...) end,
-        Include = function(_, fk) return Include(instance, fk) end
+        Include = function(_, fk) return Include(instance, fk) end,
+        OrderBy = function(_, column) return OrderBy(instance, column) end,
+        OrderByDesc = function(_, column) return OrderByDesc(instance, column) end
     }
 end

@@ -36,6 +36,14 @@ function First(self)
     return response
 end
 
+function FindById(self, id)
+    local Builder = Builder.GetFunctions(self)
+    Builder.Where(self, DbHelperFunctions.getPrimaryKey(self._table), id)
+    local query = getQuery(self) .. ' LIMIT 1'
+    local response = Wrapper.fetchSingle(query, { id })
+    return response
+end
+
 function Count(self)
     local query = string.format('SELECT COUNT(*) as count FROM `%s`', self._table)
     
@@ -52,6 +60,7 @@ function Executor.GetFunctions(instance)
     return {
         ToList = function() return ToList(instance) end,
         First = function() return First(instance) end,
-        Count = function() return Count(instance) end
+        Count = function() return Count(instance) end,
+        FindById = function(_, id) return FindById(instance, id) end
     }
 end

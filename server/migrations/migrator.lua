@@ -21,7 +21,7 @@ function Migrator.generateFile(name, queries)
         if code == 13 then
             log("Directory was found, but permissions are missing") -- this shouldn't even be triggered, but just in case
         else 
-            print(string.format("Path %s not found. Please make sure this is available", path))
+            log(string.format("Path %s not found. Please make sure this is available", path))
         end
 
         return
@@ -31,7 +31,7 @@ function Migrator.generateFile(name, queries)
 
     local file, err = io.open(string.format("%s/%s.sql", path, string.format("%s_%s", id, name)), "w")
     if not file then
-        print("Error opening file: " .. err .. ".")
+        log("Error opening file: " .. err .. ".")
         return
     end
     

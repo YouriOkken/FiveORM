@@ -34,6 +34,10 @@ function DbSet.New(tableName)
         return Executor.Count(_)
     end
 
+    function self.FindById(_, id)
+        return Executor.FindById(_, id)
+    end
+
     function self.Where(_, column, value)
         return Builder.Where(_, column, value)
     end

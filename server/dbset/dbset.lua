@@ -15,6 +15,7 @@ function DbSet.New(tableName)
         _query = nil, -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
         _joins = {} -- if Include function is called, this will be set to the query to include
     }
+    
     local Executor = Executor.GetFunctions(self)
     local Builder = Builder.GetFunctions(self)
     local Commands = Commands.GetFunctions(self)
@@ -27,10 +28,13 @@ function DbSet.New(tableName)
         return Executor.First(_)
     end
 
+    function self.Count(_)
+        return Executor.Count(_)
+    end
+
     function self.Where(_, column, value)
         return Builder.Where(_, column, value)
     end
-
 
     function self.Select(_, ...)
         return Builder.Select(_, ...)

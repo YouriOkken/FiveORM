@@ -153,6 +153,7 @@ When defining an entity for migrations, each property supports the following opt
 | `maxlength` | number | No | Max length for `varchar` columns |
 | `primaryKey` | boolean | No | Marks the column as the PRIMARY KEY |
 | `unique` | boolean | No | Marks the column as UNIQUE |
+| `autoIncrement` | boolean | No | Marks the column as auto increment. **This setting is automaticly set to true when property is primary key** |
 
 #### Example of properties
 

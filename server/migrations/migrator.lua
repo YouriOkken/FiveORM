@@ -10,7 +10,6 @@ local function isDir(path)
 end
 
 Migrator = {}
--- TODO: Refactor so it checks wether the directory exists and if not then throws an error the migrations folder doesnt exist
 function Migrator.generateFile(name, queries)
     local id = generateId()
     local path = GetResourcePath(GetCurrentResourceName())
@@ -55,7 +54,11 @@ function Migrator.build(properties, tableName)
         end
 
         if options.primaryKey ~= nil then
-            line = line .. ' PRIMARY KEY'
+            if options.autoIncrement == false then
+                line = line .. ' PRIMARY KEY'
+            else
+                line = line .. ' AUTO_INCREMENT PRIMARY KEY'
+            end
         elseif options.unique ~= nil then
             line = line .. ' UNIQUE'
         end

@@ -5,6 +5,7 @@ Config.Debug = true
 
 Config.Migrations = true
 Config.MigrationTable = "FiveORM_Migrations"
+Config.UniqueMigrationName = false
 
 function Config.log(msg)
     if Config.Debug then

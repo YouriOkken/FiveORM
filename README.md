@@ -30,9 +30,6 @@ Things I am going to be working on!
 ### Data
 - ThenInclude - nested includes like users → orders → products
 
-### Convenience
-- Exists - returns boolean wether record exists
-
 ## Functionalities
 - [Setting Entity](#setting-entity)
 - [ToList](#tolist)
@@ -47,6 +44,7 @@ Things I am going to be working on!
 - [Migrations](#migration)
 - [OrderBy](#orderby--orderbydescending)
 - [FindById](#findbyid)
+- [Exists](#exists)
 
 ### Setting entity
 Setting an entity will define what table will be used and gives back the functions
@@ -256,6 +254,16 @@ To find a record by the primary key you can use the FindById() function
 local orders = exports['FiveORM']:DbSet('orders')
 local results = orders:FindById(1)
 print(json.encode(results))
+```
+
+### Exists
+To check whether a specific record exists, you can use the Exists() function
+You can add a :Where() clause to this
+
+```lua
+local orders = exports['FiveORM']:DbSet('orders')
+local results = orders:Exists()
+print(results)
 ```
 
 ## Example

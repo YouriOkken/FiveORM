@@ -38,6 +38,10 @@ function DbSet.New(tableName)
         return Executor.FindById(_, id)
     end
 
+    function self.Exists(_)
+        return Executor.Exists(_)
+    end
+
     function self.Where(_, column, value)
         return Builder.Where(_, column, value)
     end

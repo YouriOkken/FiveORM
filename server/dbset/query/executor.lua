@@ -55,12 +55,18 @@ function Count(self)
     return result.count
 end
 
+function Exists(self)
+    local count = Count(self)
+    return count > 0
+end
+
 Executor = {}
 function Executor.GetFunctions(instance)
     return {
         ToList = function() return ToList(instance) end,
         First = function() return First(instance) end,
         Count = function() return Count(instance) end,
-        FindById = function(_, id) return FindById(instance, id) end
+        FindById = function(_, id) return FindById(instance, id) end,
+        Exists = function() return Exists(instance) end
     }
 end

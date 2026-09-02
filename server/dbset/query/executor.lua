@@ -10,6 +10,10 @@ local function getQuery(self)
         query = DbHelperFunctions.addJoins(query, self._joins)
     end
 
+    if #self.__thenJoin > 0 then
+        query = DbHelperFunctions.addJoins(query, self.__thenJoin)
+    end
+
     if #self._wheres > 0 then
         query = DbHelperFunctions.addWhere(query, self._wheres)
     end

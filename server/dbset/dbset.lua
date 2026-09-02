@@ -13,7 +13,9 @@ function DbSet.New(tableName)
         _wheres = {},   -- list of conditions
         _whereParams = {},   -- list of values for WHERE ? placeholders
         _query = nil, -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
-        _joins = {}, -- if Include function is called, this will be set to the query to include
+        _joins = {}, -- if Include function is called, this will be set to the query to include,
+        _joinedTable = nil,
+        _thenJoin = {},
         _orderBy = nil,
         _orderByDesc = nil
     }
@@ -53,6 +55,11 @@ function DbSet.New(tableName)
     -- @param fk = the foreign key column in the *base* table (e.g. player_id)
     function self.Include(_, fk)
         return Builder.Include(_, fk)
+    end
+
+    -- @param fk = the foreign key column in the *included* table (e.g. player_id)
+    function self.ThenInclude(_, fk)
+        return Builder.ThenInclude(_, fk)
     end
 
     function self.OrderBy(_, column)

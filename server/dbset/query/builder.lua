@@ -34,6 +34,30 @@ function Include(self, fk)
 
     Config.log("join: " .. join)
     table.insert(self._joins, join)
+    self._joinedTable = referencedTable
+    return self
+end
+
+-- @param fk = the foreign key column in the *included* table (e.g. player_id)
+function ThenInclude(self, fk)
+    if #self._joins > 0 or self._joinedTable == nil then
+        log("The Include() function needs to be called before the ThenInclude() function can be called")
+        return
+    end
+
+    DbHelperFunctions.doesColumnExist(self._joinedTable, fk)
+
+    local referencedTable, referencedColumn = DbHelperFunctions.getJoinedTable(self._joinedTable, fk)
+
+    local join = string.format(
+        'LEFT JOIN `%s` ON `%s`.`%s` = `%s`.`%s`',
+        referencedTable,
+        referencedTable, referencedColumn,
+        self._joinedTable, fk
+    )
+
+    Config.log("join: " .. join)
+    table.insert(self._thenJoin, join)
     return self
 end
 

@@ -1,3 +1,5 @@
+local integerTypes = { int = true, bigint = true, smallint = true, tinyint = true, mediumint = true }
+
 local function generateId()
     return os.date('%Y%m%d%H%M%S')
 end
@@ -46,17 +48,24 @@ function Migrator.build(properties, tableName)
 
     for property, options in pairs(properties) do
         local line
-        if options.type == "varchar" and options.maxlength ~= nil then
-            line = string.format('`%s` %s(%s)', property, options.type, options.maxlength)
+        if options.type == "varchar" then
+            local length = options.maxlength or 255
+            line = string.format('`%s` varchar(%s)', property, length)
         else
             line = string.format('`%s` %s', property, options.type)
         end
 
         if options.primaryKey == true then
-            if options.autoIncrement == false then
-                line = line .. ' PRIMARY KEY'
-            else
+            local isInteger = integerTypes[options.type] == true
+
+            if options.autoIncrement == true and not isInteger then
+                error(string.format("AUTO_INCREMENT is only allowed on integer columns ('%s' is %s)", property, options.type), 2)
+            end
+
+            if isInteger and options.autoIncrement ~= false then
                 line = line .. ' AUTO_INCREMENT PRIMARY KEY'
+            else
+                line = line .. ' PRIMARY KEY'
             end
         elseif options.unique == true then
             line = line .. ' UNIQUE'
@@ -69,7 +78,5 @@ function Migrator.build(properties, tableName)
         table.insert(lines, line)
     end
 
-    query = query .. table.concat(lines, ", ") .. ")"
-    return query
+    return query .. table.concat(lines, ", ") .. ")"
 end
-

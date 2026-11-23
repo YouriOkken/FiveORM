@@ -15,7 +15,7 @@ RegisterCommand("migration", function(source, args, rawCommand)
     if Config.UniqueMigrationName then
         local path = GetResourcePath(GetCurrentResourceName())
         path = string.format("%s/migrations", path)
-        local command = io.popen(string.format('dir "%s" /b', path))
+        local command = io.popen(Runner.GetListCommand(path))
         for file in command:lines() do
             if file ~= "." and file ~= ".." then
                 -- all files in the /migrations directory

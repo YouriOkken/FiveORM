@@ -13,7 +13,7 @@ local function getRunnableMigrations()
     local migrations = {}
     local path = GetResourcePath(GetCurrentResourceName())
     path = string.format("%s/migrations", path)
-    local command = io.popen(string.format('dir "%s" /b', path))
+    local command = io.popen(getListCommand(path))
     for file in command:lines() do
         if file ~= "." and file ~= ".." then
             -- all files in the /migrations directory
@@ -30,8 +30,18 @@ local function getRunnableMigrations()
 end
 
 Runner = {}
+function Runner.GetListCommand(path)
+    local isWindows = path:match('^%a:') ~= nil
+
+    if isWindows then
+        return string.format('dir "%s" /b', path)
+    end
+    return string.format('ls -1 "%s"', path)
+end
+
 function Runner.RunMigrations()
     local migrations = getRunnableMigrations()
+    migrations = table.sort(migrations)
     local migrationCount = #migrations
 
     if migrationCount == 0 then

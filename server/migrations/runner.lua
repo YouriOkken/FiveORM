@@ -13,7 +13,7 @@ local function getRunnableMigrations()
     local migrations = {}
     local path = GetResourcePath(GetCurrentResourceName())
     path = string.format("%s/migrations", path)
-    local command = io.popen(getListCommand(path))
+    local command = io.popen(Runner.GetListCommand(path))
     for file in command:lines() do
         if file ~= "." and file ~= ".." then
             -- all files in the /migrations directory
@@ -41,7 +41,7 @@ end
 
 function Runner.RunMigrations()
     local migrations = getRunnableMigrations()
-    migrations = table.sort(migrations)
+    table.sort(migrations)
     local migrationCount = #migrations
 
     if migrationCount == 0 then

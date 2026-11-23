@@ -1,6 +1,5 @@
 local function generateId()
-    math.randomseed(os.time())
-    return math.random(100000000, 999999999)
+    return os.date('%Y%m%d%H%M%S')
 end
 
 local function isDir(path)
@@ -53,13 +52,13 @@ function Migrator.build(properties, tableName)
             line = string.format('`%s` %s', property, options.type)
         end
 
-        if options.primaryKey ~= nil then
+        if options.primaryKey == true then
             if options.autoIncrement == false then
                 line = line .. ' PRIMARY KEY'
             else
                 line = line .. ' AUTO_INCREMENT PRIMARY KEY'
             end
-        elseif options.unique ~= nil then
+        elseif options.unique == true then
             line = line .. ' UNIQUE'
         end
 

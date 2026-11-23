@@ -16,19 +16,18 @@ end
 function Select(self, ...)
     local args = {...}
 
-    if args == nil then
-        error("Args nill in select", 19)
-        
+    if #args == 0 then
+        error("Select(): pass at least one column", 2)
     end
-    for _, column in ipairs(args) do
+
+    local columns = {}
+    for i, column in ipairs(args) do
         DbHelperFunctions.doesColumnExist(self._table, column)
+        columns[i] = string.format('`%s`.`%s`', self._table, column)
     end
-    local columns = table.concat(args, ", ")
 
     local clone = DbSet.Clone(self)
-
-    local query = string.format('SELECT %s.%s FROM `%s`', clone._table, columns, clone._table)
-    clone._query = query
+    clone._query = string.format('SELECT %s FROM `%s`', table.concat(columns, ', '), self._table)
     return clone
 end
 
@@ -72,9 +71,10 @@ function ThenInclude(self, fk)
         clone._joinedTable, fk
     )
 
-
     Config.log("join: " .. join)
     table.insert(clone._thenJoin, join)
+    clone._joinedTable = referencedTable   -- next ThenInclude starts from here
+
     return clone
 end
 
@@ -87,7 +87,7 @@ function OrderBy(self, column)
 
     local clone = DbSet.Clone(self)
 
-    clone._orderBy = string.format('`%s`.`%s` = ?', self._table, column)
+    clone._orderBy = string.format('`%s`.`%s`', self._table, column)
 
     return clone
 end
@@ -101,7 +101,7 @@ function OrderByDesc(self, column)
 
     local clone = DbSet.Clone(self)
 
-    clone._orderByDesc = string.format('`%s`.`%s` = ?', self._table, column)
+    clone._orderByDesc = string.format('`%s`.`%s`', self._table, column)
 
     return clone
 end

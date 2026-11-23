@@ -65,7 +65,8 @@ function Runner.RunMigrations()
         if success then
             Config.log("Migration " .. migration .. " ran successfully")
         else
-            Config.log("Migration " .. migration .. " failed")
+            error("Migration " .. migration .. " failed")
+            return
         end
     end
 

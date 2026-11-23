@@ -5,23 +5,50 @@ DbSet = {}
 -- Without this, calling Player:ToListAsync() would return nil.
 -- DbSet.__index = DbSet
 
-function DbSet.New(tableName)
-    DbHelperFunctions.doesTableExist(tableName) -- check if the table exists in the database, if not, throw an error
+local function copyList(table)
+    local result = {}
+    for i, value in ipairs(table) do 
+        result[i] = value 
+    end
+    return result
+end
 
-    local self = {
-        _table = tableName,
-        _wheres = {},   -- list of conditions
-        _whereParams = {},   -- list of values for WHERE ? placeholders
-        _query = nil, -- if select function is called, this will be set to the select query instead of the default 'SELECT * FROM table'
-        _joins = {}, -- if Include function is called, this will be set to the query to include,
+function DbSet.New(tableName)
+    DbHelperFunctions.doesTableExist(tableName)
+
+    return DbSet.FromState({
+        _table = tableName, 
+        _wheres = {}, 
+        _whereParams = {}, 
+        _query = nil,
+        _joins = {}, 
         _joinedTable = nil,
         _thenJoin = {},
-        _orderBy = nil,
-        _orderByDesc = nil
-    }
-    
+        _orderBy = nil, 
+        _orderByDesc = nil,
+    })
+end
+
+function DbSet.Clone(src)
+    return DbSet.FromState({
+        _table       = src._table,
+        _wheres      = copyList(src._wheres),
+        _whereParams = copyList(src._whereParams),
+        _query       = src._query,
+        _joins       = copyList(src._joins),
+        _joinedTable = src._joinedTable,
+        _thenJoin    = copyList(src._thenJoin),
+        _orderBy     = src._orderBy,
+        _orderByDesc = src._orderByDesc,
+    })
+end
+
+-- builds a DbSet object (state + methods) from a given state
+function DbSet.FromState(state)
+    local self = state
+
     local Executor = Executor.GetFunctions(self)
-    local Builder = Builder.GetFunctions(self)
+    local Builder  = Builder.GetFunctions(self)
     local Commands = Commands.GetFunctions(self)
 
     function self.ToList(_)

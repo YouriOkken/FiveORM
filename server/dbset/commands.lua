@@ -45,7 +45,6 @@ end
 function Update(self, column, value)
     local wheres = self._wheres
     local whereParams = self._whereParams
-    DbHelperFunctions.resetQuery(self)
 
     if #wheres == 0 then
         error('Update operation requires at least one Where condition to prevent mass updates.')

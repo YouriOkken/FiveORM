@@ -101,14 +101,3 @@ function DbHelperFunctions.addOrderByDesc(query, column)
     
     return query
 end
-
-function DbHelperFunctions.resetQuery(self)
-    self._wheres = {}
-    self._whereParams = {}
-    self._query = nil
-    self._joins = {}
-    self._joinedTable = nil
-    self._thenJoin = {}
-    self._orderBy = nil
-    self._orderByDesc = nil
-end

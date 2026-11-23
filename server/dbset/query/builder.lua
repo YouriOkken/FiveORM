@@ -1,10 +1,12 @@
 function Where(self, column, value)
     DbHelperFunctions.doesColumnExist(self._table, column)
 
-    table.insert(self._wheres, string.format('`%s` = ?', column))
-    table.insert(self._whereParams, value)
+    local clone = DbSet.Clone(self)
 
-    return self
+    table.insert(clone._wheres, string.format('`%s` = ?', column))
+    table.insert(clone._whereParams, value)
+
+    return clone
 end
 
 function Select(self, ...)
@@ -14,9 +16,11 @@ function Select(self, ...)
     end
     local columns = table.concat(args, ", ")
 
-    local query = string.format('SELECT %s.%s FROM `%s`', self._table, columns, self._table)
-    self._query = query
-    return self
+    local clone = DbSet.Clone(self)
+
+    local query = string.format('SELECT %s.%s FROM `%s`', clone._table, columns, clone._table)
+    clone._query = query
+    return clone
 end
 
 -- @param fk = the foreign key column in the *base* table (e.g. player_id)
@@ -32,16 +36,18 @@ function Include(self, fk)
         self._table, fk
     )
 
+    local clone = DbSet.Clone(self)
+
     Config.log("join: " .. join)
-    table.insert(self._joins, join)
-    self._joinedTable = referencedTable
-    return self
+    table.insert(clone._joins, join)
+    clone._joinedTable = referencedTable
+    return clone
 end
 
 -- @param fk = the foreign key column in the *included* table (e.g. player_id)
 function ThenInclude(self, fk)
     if #self._joins == 0 or self._joinedTable == nil then
-        log("The Include() function needs to be called before the ThenInclude() function can be called")
+        error("The Include() function needs to be called before the ThenInclude() function can be called")
         return
     end
 
@@ -56,9 +62,11 @@ function ThenInclude(self, fk)
         self._joinedTable, fk
     )
 
+    local clone = DbSet.Clone(self)
+
     Config.log("join: " .. join)
-    table.insert(self._thenJoin, join)
-    return self
+    table.insert(clone._thenJoin, join)
+    return clone
 end
 
 function OrderBy(self, column)
@@ -68,9 +76,11 @@ function OrderBy(self, column)
         column = DbHelperFunctions.getPrimaryKey(self._table)
     end
 
-    self._orderBy = column
+    local clone = DbSet.Clone(self)
 
-    return self
+    clone._orderBy = column
+
+    return clone
 end
 
 function OrderByDesc(self, column)
@@ -80,9 +90,11 @@ function OrderByDesc(self, column)
         column = DbHelperFunctions.getPrimaryKey(self._table)
     end
 
-    self._orderByDesc = column
+    local clone = DbSet.Clone(self)
 
-    return self
+    clone._orderByDesc = column
+
+    return clone
 end
 
 Builder = {}

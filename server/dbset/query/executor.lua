@@ -30,7 +30,6 @@ end
 function ToList(self)
     local query = getQuery(self) -- get the query with the where conditions and joins applied
     local params = self._whereParams
-    DbHelperFunctions.resetQuery(self)
     return Wrapper.fetchAll(query, params)
 end
 
@@ -38,16 +37,14 @@ function First(self)
     local query = getQuery(self) .. ' LIMIT 1'
     Config.log("first query: " .. query)
     local params = self._whereParams
-    DbHelperFunctions.resetQuery(self)
     return Wrapper.fetchSingle(query, params)
 end
 
 function FindById(self, id)
     local Builder = Builder.GetFunctions(self)
-    Builder.Where(self, DbHelperFunctions.getPrimaryKey(self._table), id)
-    local query = getQuery(self) .. ' LIMIT 1'
-    local params = self._whereParams
-    DbHelperFunctions.resetQuery(self)
+    local clone = Builder.Where(self, DbHelperFunctions.getPrimaryKey(self._table), id)
+    local query = getQuery(clone) .. ' LIMIT 1'
+    local params = clone._whereParams
     return Wrapper.fetchSingle(query, params)
 end
 
@@ -59,7 +56,6 @@ function Count(self)
     end
 
     local params = self._whereParams
-    DbHelperFunctions.resetQuery(self)
     local result = Wrapper.fetchSingle(query, params)
     return result.count
 end

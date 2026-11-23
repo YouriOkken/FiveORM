@@ -40,7 +40,7 @@ end
 
 -- @param fk = the foreign key column in the *included* table (e.g. player_id)
 function ThenInclude(self, fk)
-    if #self._joins > 0 or self._joinedTable == nil then
+    if #self._joins == 0 or self._joinedTable == nil then
         log("The Include() function needs to be called before the ThenInclude() function can be called")
         return
     end
@@ -91,6 +91,7 @@ function Builder.GetFunctions(instance)
         Where = function(_, column, value) return Where(instance, column, value) end,
         Select = function(_, ...) return Select(instance, ...) end,
         Include = function(_, fk) return Include(instance, fk) end,
+        ThenInclude = function(_, fk) return ThenInclude(instance, fk) end,
         OrderBy = function(_, column) return OrderBy(instance, column) end,
         OrderByDesc = function(_, column) return OrderByDesc(instance, column) end
     }

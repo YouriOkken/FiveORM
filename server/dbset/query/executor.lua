@@ -10,8 +10,8 @@ local function getQuery(self)
         query = DbHelperFunctions.addJoins(query, self._joins)
     end
 
-    if #self.__thenJoin > 0 then
-        query = DbHelperFunctions.addJoins(query, self.__thenJoin)
+    if #self._thenJoin > 0 then
+        query = DbHelperFunctions.addJoins(query, self._thenJoin)
     end
 
     if #self._wheres > 0 then
@@ -29,33 +29,38 @@ end
 
 function ToList(self)
     local query = getQuery(self) -- get the query with the where conditions and joins applied
-    local response = Wrapper.fetchAll(query, self._whereParams)
-    return response
+    local params = self._whereParams
+    DbHelperFunctions.resetQuery(self)
+    return Wrapper.fetchAll(query, params)
 end
 
 function First(self)
     local query = getQuery(self) .. ' LIMIT 1'
-    Config.log("to list query: " .. query)
-    local response = Wrapper.fetchSingle(query, self._whereParams)
-    return response
+    Config.log("first query: " .. query)
+    local params = self._whereParams
+    DbHelperFunctions.resetQuery(self)
+    return Wrapper.fetchSingle(query, params)
 end
 
 function FindById(self, id)
     local Builder = Builder.GetFunctions(self)
     Builder.Where(self, DbHelperFunctions.getPrimaryKey(self._table), id)
     local query = getQuery(self) .. ' LIMIT 1'
-    local response = Wrapper.fetchSingle(query, { id })
-    return response
+    local params = self._whereParams
+    DbHelperFunctions.resetQuery(self)
+    return Wrapper.fetchSingle(query, params)
 end
 
 function Count(self)
     local query = string.format('SELECT COUNT(*) as count FROM `%s`', self._table)
-    
+
     if #self._wheres > 0 then
         query = DbHelperFunctions.addWhere(query, self._wheres)
     end
 
-    local result = Wrapper.fetchSingle(query, self._whereParams)
+    local params = self._whereParams
+    DbHelperFunctions.resetQuery(self)
+    local result = Wrapper.fetchSingle(query, params)
     return result.count
 end
 

@@ -43,21 +43,27 @@ function Delete(self, value, column)
 end
 
 function Update(self, column, value)
-    if (self._wheres == nil or #self._wheres == 0) then
+    local wheres = self._wheres
+    local whereParams = self._whereParams
+    DbHelperFunctions.resetQuery(self)
+
+    if #wheres == 0 then
         error('Update operation requires at least one Where condition to prevent mass updates.')
     end
-    if (self._whereParams == nil or #self._whereParams == 0) then
+    if #whereParams == 0 then
         error('Where conditions must have corresponding parameters for Update operation.')
     end
 
     DbHelperFunctions.doesColumnExist(self._table, column)
 
-    local query = string.format('UPDATE `%s` SET `%s` = ? ', self._table, column)
-    query = DbHelperFunctions.addWhere(query, self._wheres)
+    local query = string.format('UPDATE `%s` SET `%s` = ?', self._table, column)
+    query = DbHelperFunctions.addWhere(query, wheres)
+    local params = { value, table.unpack(whereParams) }
 
     Config.log("final update query: " .. query)
-    Config.log("update params: " .. json.encode(self._whereParams) .. ", " .. tostring(value))
-    Wrapper.execute(query, { value, table.unpack(self._whereParams) })
+    Config.log("update params: " .. json.encode(params))
+
+    return Wrapper.execute(query, params) -- affected rows, so the caller knows if it hit anything
 end
 
 Commands = {}

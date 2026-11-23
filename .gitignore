@@ -1,3 +1,4 @@
 .vs/
 *.bat
 migrations/*.sql
+docs/*.md

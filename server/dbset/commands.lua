@@ -23,6 +23,10 @@ end
 function Delete(self, value, column)
     local query
 
+    if self._wheres != nil then
+        error("Where clause is made on delete statement", 26)
+    end
+     
     if column == nil then
         -- Delete(id) -- assume column is the id value
         column = DbHelperFunctions.getPrimaryKey(self._table)

@@ -1,9 +1,13 @@
 function Where(self, column, value)
+    if column == nil or value == nil then
+        error("Where(): column and value can't be nil", 2)
+    end
+
     DbHelperFunctions.doesColumnExist(self._table, column)
 
     local clone = DbSet.Clone(self)
 
-    table.insert(clone._wheres, string.format('`%s` = ?', column))
+    table.insert(clone._wheres, string.format('`%s`.`%s` = ?', self._table, column))
     table.insert(clone._whereParams, value)
 
     return clone
@@ -11,6 +15,11 @@ end
 
 function Select(self, ...)
     local args = {...}
+
+    if args == nil then
+        error("Args nill in select", 19)
+        
+    end
     for _, column in ipairs(args) do
         DbHelperFunctions.doesColumnExist(self._table, column)
     end
@@ -53,16 +62,16 @@ function ThenInclude(self, fk)
 
     DbHelperFunctions.doesColumnExist(self._joinedTable, fk)
 
-    local referencedTable, referencedColumn = DbHelperFunctions.getJoinedTable(self._joinedTable, fk)
+    local clone = DbSet.Clone(self)
+    local referencedTable, referencedColumn = DbHelperFunctions.getJoinedTable(clone._joinedTable, fk)
 
     local join = string.format(
         'LEFT JOIN `%s` ON `%s`.`%s` = `%s`.`%s`',
         referencedTable,
         referencedTable, referencedColumn,
-        self._joinedTable, fk
+        clone._joinedTable, fk
     )
 
-    local clone = DbSet.Clone(self)
 
     Config.log("join: " .. join)
     table.insert(clone._thenJoin, join)
@@ -78,7 +87,7 @@ function OrderBy(self, column)
 
     local clone = DbSet.Clone(self)
 
-    clone._orderBy = column
+    clone._orderBy = string.format('`%s`.`%s` = ?', self._table, column)
 
     return clone
 end
@@ -92,7 +101,7 @@ function OrderByDesc(self, column)
 
     local clone = DbSet.Clone(self)
 
-    clone._orderByDesc = column
+    clone._orderByDesc = string.format('`%s`.`%s` = ?', self._table, column)
 
     return clone
 end

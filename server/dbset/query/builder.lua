@@ -88,6 +88,7 @@ function OrderBy(self, column)
     local clone = DbSet.Clone(self)
 
     clone._orderBy = string.format('`%s`.`%s`', self._table, column)
+    clone._orderByDesc = nil   -- last one wins
 
     return clone
 end
@@ -102,6 +103,7 @@ function OrderByDesc(self, column)
     local clone = DbSet.Clone(self)
 
     clone._orderByDesc = string.format('`%s`.`%s`', self._table, column)
+    clone._orderBy = nil       -- last one wins
 
     return clone
 end
